@@ -7,12 +7,14 @@ import (
     "regexp"
     "strings"  
     // "path/filepath"
-    "io/ioutil"
+    // "io/ioutil"
     "github.com/valiknet18/AudioSenderTelegramBot/config"
+    // "github.com/valiknet18/AudioSenderTelegramBot/music"
+    // "fmt"
 )
 
 func main() {
-    // _ := getSession()
+    getSession()
     config := config.ParseConfig()
 
     bot, err := tgbotapi.NewBotAPI(config.BotApi)
@@ -34,22 +36,28 @@ func main() {
 
     for update := range bot.Updates {
         r, _ := regexp.Compile("(^i want to listen (to music|group|genre|track)([a-zA-Zа-яА-Я0-9- ]*)$)")
-        resultRegExp := r.FindAllString(strings.ToLower(update.Message.Text), -1)
+        resultRegExp := r.FindStringSubmatch(strings.ToLower(update.Message.Text))
 
-        audioBytes, err := ioutil.ReadFile("static/Denis_Shatskikh_-_Moim_Druzyam.ogg")
+        // log.Println(resultRegExp[2])
 
-        if err != nil {
-            panic(err)
+        switch resultRegExp[2] {
+            case "to music": 
+                // fmt.Printf(music.RandomTrack(session).Name)
         }
 
-        waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
-        bot.SendMessage(waitMessage)
+        // audioBytes, err := ioutil.ReadFile("static/Denis_Shatskikh_-_Moim_Druzyam.ogg")
 
-        audio := tgbotapi.FileBytes{Name: "Moim_Druziam.ogg", Bytes: audioBytes}
+        // if err != nil {
+        //     panic(err)
+        // }
 
-        audioConfig := tgbotapi.NewAudioUpload(update.Message.Chat.ID, audio)
+        // waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
+        // bot.SendMessage(waitMessage)
 
-        bot.SendAudio(audioConfig)
-        log.Println(resultRegExp)
+        // audio := tgbotapi.FileBytes{Name: "Moim_Druziam.ogg", Bytes: audioBytes}
+
+        // audioConfig := tgbotapi.NewAudioUpload(update.Message.Chat.ID, audio)
+
+        // bot.SendAudio(audioConfig)
     }
 }

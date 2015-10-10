@@ -2,7 +2,6 @@ package music
 
 import (
 	"gopkg.in/mgo.v2/bson"
-	"valiknet"
 )
 
 type Genre struct {
@@ -11,6 +10,6 @@ type Genre struct {
 	Groups []*Group `bson:"groups"`
 }
 
-func GetRandomGroupByGenre(genre string, session ) {
+func GetRandomGroupByGenre(genre string, session interface{}) {
 
 }

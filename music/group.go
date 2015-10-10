@@ -7,5 +7,5 @@ import (
 type Group struct {
 	Id bson.ObjectId `bson:"_id"`
 	Name string `bson:"name"`
-	Tracks []*music `bson:"tracks"`
+	Tracks []*Track `bson:"tracks"`
 }

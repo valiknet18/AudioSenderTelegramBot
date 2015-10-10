@@ -1,11 +1,25 @@
 package music
 
 import (
+"gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "math/rand"
 )
 
-type Music struct {
+type Track struct {
 	Id bson.ObjectId `bson:"_id"`
 	NameTrack string `bson:"name_track"`
 	PathToTrack string `bson:"path_to_track"` 
+}
+
+func RandomTrack(session *mgo.Session) Genre {
+	sess := session.DB("audio_sender_telegram").C("genres")
+
+	var genre Genre
+
+	count, _ := sess.Count()
+
+	sess.Find(bson.M{}).Limit(-1).Skip(rand.Intn(count)).One(&genre)
+
+	return genre	
 }
