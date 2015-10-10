@@ -8,12 +8,14 @@ import (
     "strings"  
     // "path/filepath"
     "io/ioutil"
+    "valiknet/IntertechTelegramBot/config"
 )
 
 func main() {
     // _ := getSession()
+    config := config.ParseConfig()
 
-    bot, err := tgbotapi.NewBotAPI("123528822:AAH-OEyfyOjJjy9Jjmq5ZJEbiqwBF-ybd8Q")
+    bot, err := tgbotapi.NewBotAPI(config.BotApi)
     if err != nil {
         log.Panic(err)
     }
@@ -40,7 +42,8 @@ func main() {
             panic(err)
         }
 
-        bot.SendMessage("Wait please, track upload to server")
+        waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
+        bot.SendMessage(waitMessage)
 
         audio := tgbotapi.FileBytes{Name: "Moim_Druziam.ogg", Bytes: audioBytes}
 
