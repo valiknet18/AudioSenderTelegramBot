@@ -8,7 +8,7 @@ import (
     "strings"  
     // "path/filepath"
     "io/ioutil"
-    "valiknet/IntertechTelegramBot/config"
+    "github.com/valiknet18/AudioSenderTelegramBot/config"
 )
 
 func main() {
