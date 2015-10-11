@@ -4,18 +4,51 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
 	"math/rand"
+	"github.com/valiknet18/AudioSenderTelegramBot/config"
 )
 
 type Genre struct {
+	session *mgo.Database
 	Id bson.ObjectId `bson:"_id"`
 	Name string `bson:"name"`
-	Groups []*Group `bson:"groups"`
 }
 
-func GetRandomTrackByGenre(genreName string, session *mgo.Session) (*Genre, *Group, *Track) {
-	sess := session.DB("audio_sender_telegram").C("genres")
+func (g *Genre) GetGroups() []*Group{
+	sess := g.session.C("groups")
 
-	var genre *Genre
+	var groups [] *Group
+
+	sess.Find(nil).Select(bson.M{"ref": bson.M{"$id": g.Id}}).All(groups);
+
+	return groups
+}
+
+func (g *Genre) GetGroup(nameGroup string) *Group{
+	sess := g.session.C("groups")
+
+	var group *Group
+
+	sess.Find(bson.M{"name": nameGroup}).Select(bson.M{"ref": bson.M{"$id": g.Id}}).One(&group)
+
+	return group
+}
+
+func (g *Genre) InsertGroup() *Group{
+	sess := g.session.C("groups")
+
+	configFile := config.ParseConfig()
+
+	group := &Group{Name: "", Genre: mgo.DBRef{Collection: "genres", Id: g.Id, Database: configFile.Database}}
+
+	sess.Insert(group)
+
+	return group
+}
+
+func GetRandomTrackByGenre(genreName string, session *mgo.Database) (*Genre, *Group, *Track) {
+	sess := session.C("genres")
+
+	genre := &Genre{session: session}
 
 	sess.Find(bson.M{"name": genreName}).One(&genre)
 
@@ -23,8 +56,11 @@ func GetRandomTrackByGenre(genreName string, session *mgo.Session) (*Genre, *Gro
 		return nil, nil, nil
 	}
 
-	randomGroup := rand.Intn(len(genre.Groups)) 
-	randomTrack := rand.Intn(len(genre.Groups[randomGroup].Tracks))
+	groups := genre.GetGroups()
+	randomGroup := rand.Intn(len(groups))
 
-	return genre, genre.Groups[randomGroup], genre.Groups[randomGroup].Tracks[randomTrack]
+	tracks := groups[randomGroup].GetTracks();
+	randomTrack := rand.Intn(len(tracks))
+
+	return genre, groups[randomGroup], tracks[randomTrack]
 }

@@ -7,6 +7,7 @@ import (
 
 type Config struct {
     BotApi string `json:"bot-api"`
+    Database string `json:"database"`
 }
 
 func ParseConfig() *Config {

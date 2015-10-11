@@ -14,12 +14,12 @@ import (
 )
 
 func main() {
-    session := getSession()
+    session := getDatabase()
 
     controlBot(session)     
 }
 
-func controlBot(session *mgo.Session) {
+func controlBot(session *mgo.Database) {
     config := config.ParseConfig()
 
     bot, err := tgbotapi.NewBotAPI(config.BotApi)
