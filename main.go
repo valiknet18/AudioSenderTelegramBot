@@ -3,7 +3,7 @@ package main
 import (
     "log"
     "github.com/Syfaro/telegram-bot-api"
-    // "gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2"
     "regexp"
     "strings"  
     // "path/filepath"
@@ -15,6 +15,11 @@ import (
 
 func main() {
     session := getSession()
+
+    controlBot(session)     
+}
+
+func controlBot(session *mgo.Session) {
     config := config.ParseConfig()
 
     bot, err := tgbotapi.NewBotAPI(config.BotApi)
@@ -75,7 +80,7 @@ func sendAudioToServer(bot *tgbotapi.BotAPI, update tgbotapi.Update, genre *musi
         waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "No one track is not found")
         bot.SendMessage(waitMessage)     
     } else {
-        audioBytes, err := ioutil.ReadFile(track.PathToTrack)
+        audioBytes, err := ioutil.ReadFile("static/music/" + track.PathToTrack)
 
         if err != nil {
             panic(err)
@@ -94,3 +99,4 @@ func sendAudioToServer(bot *tgbotapi.BotAPI, update tgbotapi.Update, genre *musi
         bot.SendAudio(audioConfig)
     }
 }
+

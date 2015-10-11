@@ -5,7 +5,6 @@ import (
     "gopkg.in/mgo.v2/bson"
     "math/rand"
     "strings"
-    "fmt"
 )
 
 type Track struct {
