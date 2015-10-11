@@ -55,7 +55,13 @@ func main() {
                 }
 
                 case "group": {
-                    genre, group, track := music.GetRandomTrackByGenre(strings.ToLower(strings.Trim(resultRegExp[3], " ")), session)
+                    genre, group, track := music.GetRandomTrackByGroupName(strings.ToLower(strings.Trim(resultRegExp[3], " ")), session)
+
+                    sendAudioToServer(bot, update, genre, group, track)
+                }
+
+                case "track": {
+                    genre, group, track := music.GetTrackByTrackNameAndGroupName(strings.ToLower(strings.Trim(resultRegExp[3], " ")), session)
 
                     sendAudioToServer(bot, update, genre, group, track)
                 }
