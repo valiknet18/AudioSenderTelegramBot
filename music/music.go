@@ -1,7 +1,7 @@
 package music
 
 import (
-"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
     "math/rand"
 )
@@ -21,6 +21,9 @@ func RandomTrack(session *mgo.Session) (*Genre, *Group, *Track) {
 
 	sess.Find(bson.M{}).Limit(-1).Skip(rand.Intn(count)).One(&genre)
 
+	if genre == nil {
+		return nil, nil, nil
+	}
 
 	randomGroup := rand.Intn(len(genre.Groups)) 
 	randomTrack := rand.Intn(len(genre.Groups[randomGroup].Tracks))

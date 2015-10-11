@@ -47,27 +47,44 @@ func main() {
 
                     sendAudioToServer(bot, update, genre, group, track)
                 }
+
+                case "genre": {
+                    genre, group, track := music.GetRandomTrackByGenre(strings.ToLower(strings.Trim(resultRegExp[3], " ")), session)
+
+                    sendAudioToServer(bot, update, genre, group, track)
+                }
+
+                case "group": {
+                    genre, group, track := music.GetRandomTrackByGenre(strings.ToLower(strings.Trim(resultRegExp[3], " ")), session)
+
+                    sendAudioToServer(bot, update, genre, group, track)
+                }
             }
         }   
     }
 }
 
 func sendAudioToServer(bot *tgbotapi.BotAPI, update tgbotapi.Update, genre *music.Genre, group *music.Group, track *music.Track) {
-    audioBytes, err := ioutil.ReadFile(track.PathToTrack)
+    if track == nil {
+        waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "No one track is not found")
+        bot.SendMessage(waitMessage)     
+    } else {
+        audioBytes, err := ioutil.ReadFile(track.PathToTrack)
 
-    if err != nil {
-        panic(err)
+        if err != nil {
+            panic(err)
+        }
+
+        waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
+        bot.SendMessage(waitMessage)
+
+        audio := tgbotapi.FileBytes{Name: strings.Replace(track.NameTrack, " ", "", -1) + ".ogg", Bytes: audioBytes}
+
+        audioConfig := tgbotapi.NewAudioUpload(update.Message.Chat.ID, audio)
+
+        resultMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Result track: " + group.Name + " - " + track.NameTrack)
+        bot.SendMessage(resultMessage)
+
+        bot.SendAudio(audioConfig)
     }
-
-    waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
-    bot.SendMessage(waitMessage)
-
-    audio := tgbotapi.FileBytes{Name: strings.Replace(track.NameTrack, " ", "", -1) + ".ogg", Bytes: audioBytes}
-
-    audioConfig := tgbotapi.NewAudioUpload(update.Message.Chat.ID, audio)
-
-    resultMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Result track: " + group.Name + " - " + track.NameTrack)
-    bot.SendMessage(resultMessage)
-
-    bot.SendAudio(audioConfig)
 }
