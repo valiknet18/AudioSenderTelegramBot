@@ -16,12 +16,17 @@ type Group struct {
 	Tracks []*Track `bson:"tracks"`
 }
 
+func (g *Group) SetSession(session *mgo.Database) {
+	g.session = session
+}
+
 func GetGroup(groupName string, session *mgo.Database) *Group{
 	sess := session.C("groups")
 
-	group := &Group{session: session}
+	group := &Group{}
 
 	sess.Find(bson.M{"name": groupName}).One(&group)
+	group.SetSession(session)
 
 	return group
 }
@@ -31,7 +36,7 @@ func (g *Group) GetTracks() [] *Track{
 
 	var tracks [] *Track
 
-	sess.Find(nil).Select(bson.M{"$ref": bson.M{"$id": g.Id}}).All(&tracks)
+	sess.Find(bson.M{"group.$id": g.Id}).All(&tracks)
 
 	return tracks
 }
@@ -39,9 +44,10 @@ func (g *Group) GetTracks() [] *Track{
 func (g *Group) GetTrack(NameTrack string) *Track{
 	sess := g.session.C("tracks")
 
-	track := &Track{session: g.session}
+	track := &Track{}
 
 	sess.Find(bson.M{"name_track": NameTrack}).Select(bson.M{"$ref": bson.M{"$id": g.Id}}).One(&track)
+	track.SetSession(g.session)
 
 	return track
 }
