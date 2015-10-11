@@ -12,14 +12,18 @@ type Track struct {
 	PathToTrack string `bson:"path_to_track"` 
 }
 
-func RandomTrack(session *mgo.Session) Genre {
+func RandomTrack(session *mgo.Session) (*Genre, *Group, *Track) {
 	sess := session.DB("audio_sender_telegram").C("genres")
 
-	var genre Genre
+	var genre *Genre
 
 	count, _ := sess.Count()
 
 	sess.Find(bson.M{}).Limit(-1).Skip(rand.Intn(count)).One(&genre)
 
-	return genre	
+
+	randomGroup := rand.Intn(len(genre.Groups)) 
+	randomTrack := rand.Intn(len(genre.Groups[randomGroup].Tracks))
+
+	return genre, genre.Groups[randomGroup], genre.Groups[randomGroup].Tracks[randomTrack]
 }

@@ -7,14 +7,14 @@ import (
     "regexp"
     "strings"  
     // "path/filepath"
-    // "io/ioutil"
+    "io/ioutil"
     "github.com/valiknet18/AudioSenderTelegramBot/config"
-    // "github.com/valiknet18/AudioSenderTelegramBot/music"
+    "github.com/valiknet18/AudioSenderTelegramBot/music"
     // "fmt"
 )
 
 func main() {
-    getSession()
+    session := getSession()
     config := config.ParseConfig()
 
     bot, err := tgbotapi.NewBotAPI(config.BotApi)
@@ -38,26 +38,36 @@ func main() {
         r, _ := regexp.Compile("(^i want to listen (to music|group|genre|track)([a-zA-Zа-яА-Я0-9- ]*)$)")
         resultRegExp := r.FindStringSubmatch(strings.ToLower(update.Message.Text))
 
-        // log.Println(resultRegExp[2])
+        log.Println(resultRegExp)
 
-        switch resultRegExp[2] {
-            case "to music": 
-                // fmt.Printf(music.RandomTrack(session).Name)
-        }
+        if len(resultRegExp) > 0 {
+            switch resultRegExp[2] {
+                case "to music": {
+                    genre, group, track := music.RandomTrack(session)
 
-        // audioBytes, err := ioutil.ReadFile("static/Denis_Shatskikh_-_Moim_Druzyam.ogg")
-
-        // if err != nil {
-        //     panic(err)
-        // }
-
-        // waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
-        // bot.SendMessage(waitMessage)
-
-        // audio := tgbotapi.FileBytes{Name: "Moim_Druziam.ogg", Bytes: audioBytes}
-
-        // audioConfig := tgbotapi.NewAudioUpload(update.Message.Chat.ID, audio)
-
-        // bot.SendAudio(audioConfig)
+                    sendAudioToServer(bot, update, genre, group, track)
+                }
+            }
+        }   
     }
+}
+
+func sendAudioToServer(bot *tgbotapi.BotAPI, update tgbotapi.Update, genre *music.Genre, group *music.Group, track *music.Track) {
+    audioBytes, err := ioutil.ReadFile(track.PathToTrack)
+
+    if err != nil {
+        panic(err)
+    }
+
+    waitMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Wait please, track upload to server")
+    bot.SendMessage(waitMessage)
+
+    audio := tgbotapi.FileBytes{Name: strings.Replace(track.NameTrack, " ", "", -1) + ".ogg", Bytes: audioBytes}
+
+    audioConfig := tgbotapi.NewAudioUpload(update.Message.Chat.ID, audio)
+
+    resultMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Result track: " + group.Name + " - " + track.NameTrack)
+    bot.SendMessage(resultMessage)
+
+    bot.SendAudio(audioConfig)
 }
