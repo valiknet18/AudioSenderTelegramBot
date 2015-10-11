@@ -46,7 +46,7 @@ func (g *Group) GetTrack(NameTrack string) *Track{
 
 	track := &Track{}
 
-	sess.Find(bson.M{"name_track": NameTrack}).Select(bson.M{"$ref": bson.M{"$id": g.Id}}).One(&track)
+	sess.Find(bson.M{"name_track": NameTrack, "group.$id": g.Id}).One(&track)
 	track.SetSession(g.session)
 
 	return track

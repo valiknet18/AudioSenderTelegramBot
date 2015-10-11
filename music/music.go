@@ -52,39 +52,25 @@ func RandomTrack(session *mgo.Database) (*Genre, *Group, *Track) {
 }
 
 func GetTrackByTrackNameAndGroupName(trackData string, session *mgo.Database) (*Genre, *Group, *Track) {
-	sess := session.C("genres")
-
 	trackDataSplited := strings.Split(trackData, "-")
 
 	if len(trackDataSplited) == 2 {
 		groupName := strings.Trim(strings.ToLower(trackDataSplited[0]), " ")
 		trackName := strings.Trim(strings.ToLower(trackDataSplited[1]), " ")
 
-		var genres [] *Genre
-		// var genre *Genre
-		// var group *Group
+		group := GetGroup(groupName, session)
 
-		sess.Find(nil).Select(bson.M{"groups": bson.M{"$elemMatch": bson.M{"name": groupName, "tracks": bson.M{"$elemMatch": bson.M{"name_track": trackName}}}}}).All(&genres)
+		if group.Name == "" {
+			return nil, nil, nil
+		}
 
-		// for _, genreIt := range genres {
-		// 	if len(genreIt.Groups) > 0 {
-		// 		genre = genreIt
-		// 		break
-		// 	}
-		// }
+		track := group.GetTrack(trackName)	
 
-		// if genre == nil {
-		// 	return nil, nil, nil
-		// }
+		if track.PathToTrack == "" {
+			return nil, nil, nil
+		}
 
-		// for _, groupIt := range genre.Groups {
-		// 	if len(groupIt.Tracks) > 0 {
-		// 		group = groupIt
-		// 		break;
-		// 	}
-		// }
-
-		return nil, nil, nil	
+		return nil, group, track
 	}
 
 	return nil, nil, nil
