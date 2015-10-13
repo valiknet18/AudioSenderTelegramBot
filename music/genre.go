@@ -10,8 +10,8 @@ import (
 
 type Genre struct {
 	session *mgo.Database
-	Id bson.ObjectId `bson:"_id"`
-	Name string `bson:"name"`
+	Id bson.ObjectId `bson:"_id", json:"id"`
+	Name string `bson:"name", json:"name"`
 }
 
 func (g *Genre) SetSession(session *mgo.Database) {

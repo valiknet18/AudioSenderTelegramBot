@@ -1,0 +1,28 @@
+{
+	"ImportPath": "github.com/valiknet18/AudioSenderTelegramBot",
+	"GoVersion": "go1.4",
+	"Deps": [
+		{
+			"ImportPath": "github.com/Syfaro/telegram-bot-api",
+			"Rev": "e1a0a819c0036d628c5ef449135c7963006f7cbc"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1c83b3eabd45b6d76072b66b746c20815fb2872d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "ad4d7a5882b961e07e2626045eb995c022ac6664"
+		},
+		{
+			"ImportPath": "github.com/technoweenie/multipartstreamer",
+			"Comment": "v1.0.1",
+			"Rev": "a90a01d73ae432e2611d178c18367fbaa13e0154"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2",
+			"Comment": "r2015.10.05",
+			"Rev": "f402e3a216db333ae6b3ba68b9152a34a0bc6984"
+		}
+	]
+}
