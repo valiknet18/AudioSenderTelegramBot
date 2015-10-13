@@ -1,8 +1,8 @@
 package music
 
 import (
-	"gopkg.in/mgo.v2/bson"
-	"gopkg.in/mgo.v2"
+	"github.com/valiknet18/AudioSenderTelegramBot/Godeps/_workspace/src/gopkg.in/mgo.v2/bson"
+	"github.com/valiknet18/AudioSenderTelegramBot/Godeps/_workspace/src/gopkg.in/mgo.v2"
 	"math/rand"
 	"github.com/valiknet18/AudioSenderTelegramBot/config"
 	"fmt"
